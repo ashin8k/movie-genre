@@ -1,32 +1,28 @@
 import streamlit as st
 
+def predict_genre(plot):
+    plot = plot.lower()
 
-# Load model (runs once)
-classifier = pipeline(
-    "zero-shot-classification",
-    model="typeform/distilbert-base-uncased-mnli"
-)
-
-labels = ["Action", "Comedy", "Drama", "Horror", "Sci-Fi", "Romance"]
-
-def predict_genre(text):
-    result = classifier(text, candidate_labels=labels)
-    return result
-
-# ---------------- UI ----------------
+    if "love" in plot or "romance" in plot:
+        return ["Romance"]
+    elif "fight" in plot or "war" in plot:
+        return ["Action"]
+    elif "ghost" in plot or "haunted" in plot:
+        return ["Horror"]
+    elif "funny" in plot or "laugh" in plot:
+        return ["Comedy"]
+    elif "detective" in plot or "murder" in plot:
+        return ["Thriller"]
+    else:
+        return ["Drama"]
 
 st.title("🎬 Movie Genre Predictor")
-st.write("Enter a movie story and get predicted genres")
 
-text = st.text_area("Movie Story")
+plot = st.text_area("Enter a movie plot:")
 
 if st.button("Predict Genre"):
-    if text.strip() == "":
-        st.warning("Please enter a movie story")
+    if plot.strip():
+        genres = predict_genre(plot)
+        st.success("Predicted Genre: " + ", ".join(genres))
     else:
-        result = predict_genre(text)
-
-        st.subheader("Predicted Genres:")
-
-        for label, score in zip(result["labels"][:3], result["scores"][:3]):
-            st.write(f"{label}: {score:.2f}%")
+        st.warning("Please enter a movie plot.")
